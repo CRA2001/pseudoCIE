@@ -1,0 +1,56 @@
+import re
+
+class Lexer:
+    def __init__(self,code):
+        self.code = code # this will hold the code to run
+        self.tokens = [] #will store all the tokens found inside the code
+        self.pos = 0 #used to track the scanning process in lexical analysis
+        #token patterns that will be compared with the code given, where each pattern will be a tuple (<type category of tuple>, <regEx_pattern>) 
+        self.t_spec = [
+            ('NUMBER',r'\b\d+\b'), #integer values
+            ('IDENTIFIER',r'\b\[A-Za-z_]\w*\b'),
+            ('ASSIGN',r'\<-'),
+            ('PLUS',r'\+'),
+            ('MINUS',r'\-'),
+            ('MULTIPLY',r'\*'),
+            ('DIVIDE',r'/'),
+            ('LPAREN',r'\('),
+            ('RPAREN',r'\)'),
+            ('SKIP',r'[ \t]+'),
+            ('MISMATCH',r',')
+        ]
+
+        #compiling the paterns
+        self.token_regex = re.compile('|'.join(f'(?P<{pair[0]}>{pair[1]})' for pair in self.t_spec ))
+
+    def tokenize(self):
+        #tokenization process (input code into tokens)
+        for match in self.token_regex.finditer(self.code):
+            token_type= match.lastgroup
+            token_value = match.group(token_type)
+            if token_type == "NUMBER":
+                token_value = int(token_value) #converting it into a number 
+            elif token_type == 'SKIP' or token_type == 'NEWLINE':
+                continue #ignore the non-tokens
+            elif token_type == 'MISMATCH':
+                raise RuntimeError(f'Unexpected character: {token_value!r}')
+
+            self.tokens.append((token_type,token_value))
+        return self.tokens
+
+
+
+# test code
+
+if __name__ == '__main__':
+    pseudocode = """
+    x <- 5+3 
+    y <- x * 2
+
+    """
+    lexer = Lexer(pseudocode)
+    tokens = lexer.tokenize()
+
+    print("Tokens:")
+    for token in tokens:
+        print(token)
