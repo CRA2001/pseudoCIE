@@ -7,17 +7,33 @@ class Lexer:
         self.pos = 0 #used to track the scanning process in lexical analysis
         #token patterns that will be compared with the code given, where each pattern will be a tuple (<type category of tuple>, <regEx_pattern>) 
         self.t_spec = [
-            ('NUMBER',r'\b\d+\b'), #integer values
-            ('IDENTIFIER',r'\b\[A-Za-z_]\w*\b'),
-            ('ASSIGN',r'\<-'),
+            #Control statements - CONDITIONALS
+            ('IF',r'\bIF\b'),
+            ('THEN',r'\bTHEN\b'),
+            ('ELSE',r'\bELSE\b'),
+            ('ENDIF',r'\bENDIF\b'),
+            ('AND',r'\bAND\b'),
+            ('OR',r'\bOR\b'),
+            #Operators
+            ('ASSIGN',r'<-'),
+            ('EQ',r'='),
+            ('GT',r'>'),
+            ('LT',r'<'),
+            ('GTE',r'>='),
+            ('LTE',r'<='),
             ('PLUS',r'\+'),
             ('MINUS',r'\-'),
             ('MULTIPLY',r'\*'),
             ('DIVIDE',r'/'),
             ('LPAREN',r'\('),
             ('RPAREN',r'\)'),
+            #Data types
+            ('NUMBER',r'\b\d+\b'), #integer values
+            ('IDENTIFIER',r'\b[A-Za-z_]\w*\b'),
+            #Ignore this shit
             ('SKIP',r'[ \t]+'),
-            ('MISMATCH',r',')
+            #Catch unexpected characters
+            ('MISMATCH',r'.')
         ]
 
         #compiling the paterns
@@ -43,6 +59,7 @@ class Lexer:
 # test code
 
 if __name__ == '__main__':
+    print('test1: simple expressions')
     pseudocode = """
     x <- 5+3 
     y <- x * 2
@@ -52,5 +69,27 @@ if __name__ == '__main__':
     tokens = lexer.tokenize()
 
     print("Tokens:")
-    for token in tokens:
-        print(token)
+    print(tokens)
+
+    print('test2: relational operators')
+    pseudocode = '''
+    x <- 5 AND y <-3 OR z <-10
+    '''
+    lexer_instance = Lexer(pseudocode)
+    tokens=lexer.tokenize()
+    print(tokens)
+
+    print('test3: conditionals')
+    pseudocode = '''
+    x <- 5 
+    IF x > 5 THEN
+        y <- x*2
+    ELSE
+        y <- x - 2
+    '''
+    lexer = Lexer(pseudocode)
+    tokens = lexer.tokenize()
+    print(tokens)
+
+
+    
