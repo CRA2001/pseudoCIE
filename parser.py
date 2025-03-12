@@ -16,11 +16,6 @@ class Parser:
 		#if the position is still inside of range of amount of elements in the token array
 		# then return the token at the current position
 		return self.tokens[self.pos] if self.pos < len(self.tokens) else None
-		'''
-		if self.pos < len(self.tokens):
-			return self.tokens[self.pos]
-		return None
-		'''
 
 	def consume(self,token_type):
 		#determining whether or not the current token and the token type at the current tuple match with
@@ -33,10 +28,26 @@ class Parser:
 	def parse(self):
 		left = self.current_token()[1]
 		self.consume('NUMBER')
-		self.consume('PLUS')
-		right = self.current_token()[1]
-		self.consume('NUMBER')
-		return ('ADD',left,right)
+
+		while self.current_token() and self.current_token()[0] in ('PLUS','MINUS','MULTIPLY','DIVIDE'):
+			op = self.current_token()[0]
+			self.consume(op)
+			right = self.tokens[self.pos][1]
+			self.consume('NUMBER')
+			if op =='PLUS':
+				left = ('ADD',left,right)
+			elif op =='MINUS':
+				left = ('SUB',left,right)
+			elif op == 'MULTIPLY':
+				left = ('MULTIPLY',left,right)
+			elif op == 'DIVIDE':
+				left = ('DIVIDE',left,right)
+		return left
+
+		# self.consume('PLUS')
+		# right = self.current_token()[1]
+		# self.consume('NUMBER')
+		# return ('ADD',left,right)
 	
 
 if __name__ == "__main__":

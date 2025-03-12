@@ -11,6 +11,9 @@ class Lexer:
             #Data types
             ('NUMBER',r'\b\d+\b'),
             ('PLUS',r'\+'),
+            ('MINUS',r'\-'),
+            ('MULTIPLY',r'\*'),
+            ('DIVIDE',r'/'),
             ('SKIP',r'[ \t]+'),
             ('MISMATCH',r'.')
         ]
