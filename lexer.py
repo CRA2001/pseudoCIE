@@ -7,8 +7,8 @@ class Lexer:
         self.pos = 0 #used to track the scanning process in lexical analysis
         #token patterns that will be compared with the code given, where each pattern will be a tuple (<type category of tuple>, <regEx_pattern>) 
         self.t_spec = [
-
-            #Data types
+            ("IDENTIFIER",r'\b[a-zA-Z_][a-zA-Z0-9_]*\b'),
+            ('ASSIGN','<-'),            
             ('NUMBER',r'\b\d+\b'),
             ('PLUS',r'\+'),
             ('MINUS',r'\-'),
@@ -41,13 +41,28 @@ class Lexer:
 # test code
 
 if __name__ == '__main__':
-    print('test1: simple expressions')
-    pseudocode = "2+3"
-    lexer = Lexer(pseudocode)
-    tokens = lexer.tokenize()
+    # print('test1: simple expressions')
+    # pseudocode = "2+3"
+    # lexer = Lexer(pseudocode)
+    # tokens = lexer.tokenize()
 
-    print("Tokens:")
-    print(tokens)
+    # print("Tokens:")
+    # print(tokens)
+    
+    print("Test 2: variable and assignments")
+    pseudocode = '''
+    x <- 3    
+    '''
+    lexer=Lexer(pseudocode)
+    tokens=lexer.tokenize()
+    print(f"Tokens {tokens}")
+    print("Test 3: variable and assignments with arithmetic")
+    pseudocode = '''
+    x <- 3 + 4    
+    '''
+    lexer=Lexer(pseudocode)
+    tokens=lexer.tokenize()
+    print(f"Tokens {tokens}")
 
 
 
