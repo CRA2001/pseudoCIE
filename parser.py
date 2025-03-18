@@ -26,6 +26,13 @@ class Parser:
 		#if it isn't then raise a syntax error
 			raise SyntaxError(f"Expected token type: {token_type}, got {self.current_token()} instead")
 	def parse(self):
+		if self.current_token()[0] == "IDENTIFIER" and self.tokens[self.pos+1][0] == 'ASSIGN':
+			var_name = self.current_token()[1]
+			self.consume('IDENTIFIER')
+			self.consume('ASSIGN')
+			expr = self.parse()
+			return ('ASSIGN',var_name,expr)
+		
 		left = self.current_token()[1]
 		self.consume('NUMBER')
 
@@ -51,8 +58,17 @@ class Parser:
 	
 
 if __name__ == "__main__":
-	print('test1: simple expressions')
-	pseudocode = "2+3"
+	# print('test1: simple expressions')
+	# pseudocode = "2+3"
+	# l = Lexer(pseudocode)
+	# tokens = l.tokenize()
+	# print("Tokens:")
+	# print(tokens)
+	# p = Parser(tokens)
+	# ast = p.parse()
+	# print("AST: ", ast)
+	print("Test 1: Variables")
+	pseudocode = "x <- 2"
 	l = Lexer(pseudocode)
 	tokens = l.tokenize()
 	print("Tokens:")
@@ -60,9 +76,12 @@ if __name__ == "__main__":
 	p = Parser(tokens)
 	ast = p.parse()
 	print("AST: ", ast)
-
-
-
-
-
-
+	print("Test 3: Variables w/ arithmetic")
+	pseudocode = "x <- 2+1"
+	l = Lexer(pseudocode)
+	tokens = l.tokenize()
+	print("Tokens:")
+	print(tokens)
+	p = Parser(tokens)
+	ast = p.parse()
+	print("AST: ", ast)
