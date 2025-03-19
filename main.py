@@ -69,3 +69,18 @@ if __name__ == '__main__':
     # print("TEST 2: 24/4 ")
     # code = "24/4"
     # run_code(code)
+
+    #Variables test
+    print(" Test 1: x <- 1 ")
+    code = "x <- 1"
+    run_code(code)
+    print(" Test 2: x <- 1+1")
+    code = "x <- 1+1"
+    run_code(code)
+    print(" Test 3: x <- 1+1 \n c <- x + 1")
+    code = '''
+    x<-1+1
+    c <- x + 1
+    '''
+    run_code(code)
+    
