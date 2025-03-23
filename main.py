@@ -71,9 +71,26 @@ if __name__ == '__main__':
     # code = "24/4"
     # run_code(code)
 
+<<<<<<< HEAD
     print("TEST 4: Multi-line Assignment")
     code = """
     x <- 1 + 1
     c <- x + 1
     """
     run_code(code)  # Should properly assign x and c
+=======
+    #Variables test
+    print(" Test 1: x <- 1 ")
+    code = "x <- 1"
+    run_code(code)
+    print(" Test 2: x <- 1+1")
+    code = "x <- 1+1"
+    run_code(code)
+    print(" Test 3: x <- 1+1 \n c <- x + 1")
+    code = '''
+    x<-1+1
+    c <- x + 1
+    '''
+    run_code(code)
+    
+>>>>>>> e17923a20ea9f245bab94680f5d8a4bdfc442c35
