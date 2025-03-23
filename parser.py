@@ -25,17 +25,13 @@ class Parser:
 		else:
 		#if it isn't then raise a syntax error
 			raise SyntaxError(f"Expected token type: {token_type}, got {self.current_token()} instead")
-	def parse(self):
-		if self.current_token()[0] == "IDENTIFIER" and self.tokens[self.pos+1][0] == 'ASSIGN':
-			var_name = self.current_token()[1]
-			self.consume('IDENTIFIER')
-			self.consume('ASSIGN')
-			expr = self.parse()
-			return ('ASSIGN',var_name,expr)
 		
+	def parse_expr(self):
 		left = self.current_token()[1]
-		self.consume('NUMBER')
-
+		if self.current_token()[0] == 'NUMBER':
+			self.consume('NUMBER')
+		elif self.current_token()[0] == 'IDENTIFIER':
+			self.consume("IDENTIFIER")
 		while self.current_token() and self.current_token()[0] in ('PLUS','MINUS','MULTIPLY','DIVIDE'):
 			op = self.current_token()[0]
 			self.consume(op)
@@ -50,6 +46,22 @@ class Parser:
 			elif op == 'DIVIDE':
 				left = ('DIVIDE',left,right)
 		return left
+	
+	def parse(self):
+		statements = []
+		while self.current_token():
+			if self.current_token()[0] == "IDENTIFIER" and self.tokens[self.pos+1][0] == 'ASSIGN':
+				var_name = self.current_token()[1]
+				self.consume('IDENTIFIER')
+				self.consume('ASSIGN')
+				expr = self.parse_expr() #parse from the right hand side
+				statements.append(('ASSIGN',var_name,expr))
+			
+			else:
+				statements.append(self.parse_expr())
+		return statements
+
+
 
 		# self.consume('PLUS')
 		# right = self.current_token()[1]
@@ -58,29 +70,14 @@ class Parser:
 	
 
 if __name__ == "__main__":
-	# print('test1: simple expressions')
-	# pseudocode = "2+3"
-	# l = Lexer(pseudocode)
-	# tokens = l.tokenize()
-	# print("Tokens:")
-	# print(tokens)
-	# p = Parser(tokens)
-	# ast = p.parse()
-	# print("AST: ", ast)
-	print("Test 1: Variables")
-	pseudocode = "x <- 2"
+	print("Test 1: Multiline code:")
+	pseudocode = '''
+	x <- 2 + 1
+	y <- 3 + 4
+	'''
 	l = Lexer(pseudocode)
 	tokens = l.tokenize()
-	print("Tokens:")
-	print(tokens)
-	p = Parser(tokens)
-	ast = p.parse()
-	print("AST: ", ast)
-	print("Test 3: Variables w/ arithmetic")
-	pseudocode = "x <- 2+1"
-	l = Lexer(pseudocode)
-	tokens = l.tokenize()
-	print("Tokens:")
+	print("Tokens")
 	print(tokens)
 	p = Parser(tokens)
 	ast = p.parse()
