@@ -21,6 +21,7 @@ def run_code(code):
 
 
 if __name__ == '__main__':
+
     #addition tests
     # print("TEST 1: 2 + 3")
     # code = "2 + 3"
@@ -44,14 +45,14 @@ if __name__ == '__main__':
     # code = "+".join(str(i) for i in range(1, 1001))  # Generates "1+2+3+...+1000"
     # run_code(code)
 
-    # print("TEST 1: 1-1")
+    # # print("TEST 1: 1-1")
     # code = "1 - 1"
     # run_code(code)
     # print("TEST 1: 100-1-1-2-3-4")
     # code = "100-1-1-2-3-4"
     # run_code(code)
 
-    #multiplication test:
+    # #multiplication test:
     # print("TEST 1: 1 * 2 ")
     # code = "1*2"
     # run_code(code)
@@ -62,10 +63,17 @@ if __name__ == '__main__':
     # code = "1 * 2 * 3 * 4 * 5"
     # run_code(code)
 
-    #divide test
+    # #divide test
     # print("TEST 1: 1/2 ")
     # code = "1/2"
     # run_code(code)
     # print("TEST 2: 24/4 ")
     # code = "24/4"
     # run_code(code)
+
+    print("TEST 4: Multi-line Assignment")
+    code = """
+    x <- 1 + 1
+    c <- x + 1
+    """
+    run_code(code)  # Should properly assign x and c
