@@ -21,7 +21,14 @@ def run_code(code):
 
 
 if __name__ == '__main__':
+    # print("Test 1 : Test of new code on single line codes: ")
+    # code = "2+3"
+    # run_code(code)
 
+    # print("Test 2: running from an external file")
+    # with open("ExternalTest.txt",'r') as File:
+    #     code = File.readline()
+    #     run_code(code)
     #addition tests
     # print("TEST 1: 2 + 3")
     # code = "2 + 3"
@@ -71,26 +78,20 @@ if __name__ == '__main__':
     # code = "24/4"
     # run_code(code)
 
-<<<<<<< HEAD
-    print("TEST 4: Multi-line Assignment")
-    code = """
-    x <- 1 + 1
-    c <- x + 1
-    """
-    run_code(code)  # Should properly assign x and c
-=======
-    #Variables test
-    print(" Test 1: x <- 1 ")
-    code = "x <- 1"
-    run_code(code)
-    print(" Test 2: x <- 1+1")
-    code = "x <- 1+1"
-    run_code(code)
-    print(" Test 3: x <- 1+1 \n c <- x + 1")
+    # #Variables test
+    # print(" Test 1: x <- 1 ")
+    # code = "x <- 1"
+    # run_code(code)
+    # print(" Test 2: x <- 1+1")
+    # code = "x <- 1+1"
+    # run_code(code)
+    print(" Test 3: \n x <- 1+1 \n c <- x + 1")
     code = '''
     x<-1+1
     c <- x + 1
     '''
     run_code(code)
-    
->>>>>>> e17923a20ea9f245bab94680f5d8a4bdfc442c35
+    print(" Test 5 (multi-line on external) - refer to ExternalTest.txt to see test file")
+    with open('ExternalTest.txt','r') as File:
+        pseudocode = ''.join(File.readlines())
+    run_code(pseudocode)

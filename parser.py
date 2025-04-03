@@ -28,15 +28,29 @@ class Parser:
 		
 	def parse_expr(self):
 		left = self.current_token()[1]
+		
+		#Allowiing numbers and identifiers as left operand
 		if self.current_token()[0] == 'NUMBER':
 			self.consume('NUMBER')
 		elif self.current_token()[0] == 'IDENTIFIER':
 			self.consume("IDENTIFIER")
+		
+		#handling expressions like x+c, c-1, etc.
 		while self.current_token() and self.current_token()[0] in ('PLUS','MINUS','MULTIPLY','DIVIDE'):
 			op = self.current_token()[0]
 			self.consume(op)
-			right = self.tokens[self.pos][1]
-			self.consume('NUMBER')
+
+			if self.current_token()[0] == 'NUMBER':
+				right = self.current_token()[1]
+				self.consume('NUMBER')
+			elif self.current_token()[0] == 'IDENTIFIER':
+				right = self.current_token()[1]
+				self.consume("IDENTIFIER")
+			else:
+				raise SyntaxError(f"Expected NUMBER or IDENTIFIER, got {self.current_token()}")
+			
+
+
 			if op =='PLUS':
 				left = ('ADD',left,right)
 			elif op =='MINUS':
@@ -70,15 +84,24 @@ class Parser:
 	
 
 if __name__ == "__main__":
-	print("Test 1: Multiline code:")
-	pseudocode = '''
-	x <- 2 + 1
-	y <- 3 + 4
-	'''
+	print("Test 1 : Test of new code on single line codes: ")
+	pseudocode = "x <- 2 + 1"
 	l = Lexer(pseudocode)
 	tokens = l.tokenize()
-	print("Tokens")
+	tokens("Tokens")
 	print(tokens)
 	p = Parser(tokens)
 	ast = p.parse()
 	print("AST: ", ast)
+	# print("Test 1: Multiline code:")
+	# pseudocode = '''
+	# x <- 2 + 1
+	# y <- 3 + 4
+	# '''
+	# l = Lexer(pseudocode)
+	# tokens = l.tokenize()
+	# print("Tokens")
+	# print(tokens)
+	# p = Parser(tokens)
+	# ast = p.parse()
+	# print("AST: ", ast)
