@@ -7,6 +7,7 @@ class Lexer:
         self.pos = 0 #used to track the scanning process in lexical analysis
         #token patterns that will be compared with the code given, where each pattern will be a tuple (<type category of tuple>, <regEx_pattern>) 
         self.t_spec = [
+            ("COMMENT",r'//.*'), #comments
             ("IDENTIFIER",r'\b[a-zA-Z_][a-zA-Z0-9_]*\b'),
             ('ASSIGN','<-'),            
             ('NUMBER',r'\b\d+\b'),
@@ -28,6 +29,8 @@ class Lexer:
             token_value = match.group(token_type)
             if token_type == "NUMBER":
                 token_value = int(token_value) #converting it into a number 
+            elif token_type == 'COMMENT':
+                continue #ignores comments which is considered a non-token
             elif token_type == 'SKIP' or token_type == 'NEWLINE':
                 continue #ignore the non-tokens
             elif token_type == 'MISMATCH':
