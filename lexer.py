@@ -7,6 +7,7 @@ class Lexer:
         self.pos = 0 #used to track the scanning process in lexical analysis
         #token patterns that will be compared with the code given, where each pattern will be a tuple (<type category of tuple>, <regEx_pattern>) 
         self.t_spec = [
+            ('OUTPUT',r'\bOUTPUT\b'),
             ("COMMENT",r'//.*'), #comments
             ("IDENTIFIER",r'\b[a-zA-Z_][a-zA-Z0-9_]*\b'),
             ('ASSIGN','<-'),            
