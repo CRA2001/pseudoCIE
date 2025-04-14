@@ -9,6 +9,9 @@ class Lexer:
         self.t_spec = [
             ('OUTPUT',r'\bOUTPUT\b'),
             ("COMMENT",r'//.*'), #comments
+            ("REAL",r'\d+\.\d+'),
+            ("STRING",r'"[^"]*"'),
+            ("BOOLEAN",r'\bTRUE\b|\bFALSE\b'),
             ("IDENTIFIER",r'\b[a-zA-Z_][a-zA-Z0-9_]*\b'),
             ('ASSIGN','<-'),            
             ('NUMBER',r'\b\d+\b'),
@@ -29,14 +32,20 @@ class Lexer:
             token_type= match.lastgroup
             token_value = match.group(token_type)
             if token_type == "NUMBER":
-                token_value = int(token_value) #converting it into a number 
+                token_value = int(token_value) #converting it into a number
+            elif token_type == 'REAL':
+                token_value = float(token_value)
+            elif token_type == "BOOLEAN":
+                token_value = True if token_value == "TRUE" else False
+            elif token_type == "STRING":
+                token_value = token_value.strip('"')
             elif token_type == 'COMMENT':
                 continue #ignores comments which is considered a non-token
             elif token_type == 'SKIP' or token_type == 'NEWLINE':
                 continue #ignore the non-tokens
             elif token_type == 'MISMATCH':
                 raise RuntimeError(f'Unexpected character: {token_value!r}')
-
+            
             self.tokens.append((token_type,token_value))
         return self.tokens
 
@@ -67,7 +76,3 @@ if __name__ == '__main__':
     lexer=Lexer(pseudocode)
     tokens=lexer.tokenize()
     print(f"Tokens {tokens}")
-
-
-
-    
