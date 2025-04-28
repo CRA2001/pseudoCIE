@@ -48,31 +48,3 @@ class Lexer:
             
             self.tokens.append((token_type,token_value))
         return self.tokens
-
-
-
-# test code
-
-if __name__ == '__main__':
-    # print('test1: simple expressions')
-    # pseudocode = "2+3"
-    # lexer = Lexer(pseudocode)
-    # tokens = lexer.tokenize()
-
-    # print("Tokens:")
-    # print(tokens)
-    
-    print("Test 2: variable and assignments")
-    pseudocode = '''
-    x <- 3    
-    '''
-    lexer=Lexer(pseudocode)
-    tokens=lexer.tokenize()
-    print(f"Tokens {tokens}")
-    print("Test 3: variable and assignments with arithmetic")
-    pseudocode = '''
-    x <- 3 + 4    
-    '''
-    lexer=Lexer(pseudocode)
-    tokens=lexer.tokenize()
-    print(f"Tokens {tokens}")

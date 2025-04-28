@@ -1,3 +1,5 @@
-a <- 5 + 5
-b <- a * 5
+a <- 5 + 5 //This is a variable A
+// This is variable B
+b <- a * 5 
 c <- a + b * 5
+//This is Variable C

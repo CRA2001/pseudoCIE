@@ -27,16 +27,20 @@ class Parser:
 			raise SyntaxError(f"Expected token type: {token_type}, got {self.current_token()} instead")
 		
 	def parse_expr(self):
-		left = self.current_token()[1]
-		
-		#Allowiing numbers and identifiers as left operand
 		if self.current_token()[0] == 'NUMBER':
+			left = self.current_token()[1]
 			self.consume('NUMBER')
 		elif self.current_token()[0] == 'IDENTIFIER':
+			left = self.current_token()[1]
 			self.consume("IDENTIFIER")
-		
-		#handling expressions like x+c, c-1, etc.
-		while self.current_token() and self.current_token()[0] in ('PLUS','MINUS','MULTIPLY','DIVIDE'):
+		elif self.current_token()[0] == 'STRING':
+			left = self.current_token()[1]
+			self.consume('STRING')
+		else:
+			raise SyntaxError(f"Unexpected token: {self.current_token()}")
+
+		# handling expressions with + - * /
+		while self.current_token() and self.current_token()[0] in ('PLUS', 'MINUS', 'MULTIPLY', 'DIVIDE'):
 			op = self.current_token()[0]
 			self.consume(op)
 
@@ -46,19 +50,21 @@ class Parser:
 			elif self.current_token()[0] == 'IDENTIFIER':
 				right = self.current_token()[1]
 				self.consume("IDENTIFIER")
+			elif self.current_token()[0] == 'STRING':
+				right = ('STRING', self.current_token()[1])
+				self.consume('STRING')
 			else:
-				raise SyntaxError(f"Expected NUMBER or IDENTIFIER, got {self.current_token()}")
-			
+				raise SyntaxError(f"Expected NUMBER, IDENTIFIER, or STRING, got {self.current_token()}")
 
-
-			if op =='PLUS':
-				left = ('ADD',left,right)
-			elif op =='MINUS':
-				left = ('SUB',left,right)
+			if op == 'PLUS':
+				left = ('ADD', left, right)
+			elif op == 'MINUS':
+				left = ('SUB', left, right)
 			elif op == 'MULTIPLY':
-				left = ('MULTIPLY',left,right)
+				left = ('MULTIPLY', left, right)
 			elif op == 'DIVIDE':
-				left = ('DIVIDE',left,right)
+				left = ('DIVIDE', left, right)
+
 		return left
 	
 	def parse(self):
@@ -70,29 +76,25 @@ class Parser:
 				self.consume('ASSIGN')
 				expr = self.parse_expr() #parse from the right hand side
 				statements.append(('ASSIGN',var_name,expr))
+			elif self.current_token()[0] == "OUTPUT":
+				self.consume('OUTPUT')
+				expr = self.parse_expr()
+				statements.append(("OUTPUT",expr))
 			
 			else:
 				statements.append(self.parse_expr())
 		return statements
 
-
-
-		# self.consume('PLUS')
-		# right = self.current_token()[1]
-		# self.consume('NUMBER')
-		# return ('ADD',left,right)
-	
-
-if __name__ == "__main__":
-	print("Test 1 : Test of new code on single line codes: ")
-	pseudocode = "x <- 2 + 1"
-	l = Lexer(pseudocode)
-	tokens = l.tokenize()
-	tokens("Tokens")
-	print(tokens)
-	p = Parser(tokens)
-	ast = p.parse()
-	print("AST: ", ast)
+# if __name__ == "__main__":
+# 	print("Test 1 : Test of new code on single line codes: ")
+# 	pseudocode = "x <- 2 + 1"
+# 	l = Lexer(pseudocode)
+# 	tokens = l.tokenize()
+# 	tokens("Tokens")
+# 	print(tokens)
+# 	p = Parser(tokens)
+# 	ast = p.parse()
+# 	print("AST: ", ast)
 	# print("Test 1: Multiline code:")
 	# pseudocode = '''
 	# x <- 2 + 1
