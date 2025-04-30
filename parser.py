@@ -34,7 +34,7 @@ class Parser:
 			left = self.current_token()[1]
 			self.consume("IDENTIFIER")
 		elif self.current_token()[0] == 'STRING':
-			left = self.current_token()[1]
+			left = ('STRING',self.current_token()[1])
 			self.consume('STRING')
 		else:
 			raise SyntaxError(f"Unexpected token: {self.current_token()}")

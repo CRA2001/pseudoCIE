@@ -21,7 +21,35 @@ def run_code(code):
 
 
 if __name__ == '__main__':
+    print("TEST 1: OUTPUT Hello World")
     code = '''
     OUTPUT "Hello World"
     '''
     run_code(code)
+    print("*" * 20)
+
+    print("TEST 2 : OUTPUT 1")
+    code = '''
+    OUTPUT 1
+    '''
+    run_code(code)
+    print("*" * 20)
+    print("TEST 3 : OUTPUT with variables")
+    code = '''
+    a <- 3
+    b <- 4
+    OUTPUT a + b
+    '''
+    run_code(code)
+    print("*" * 20)
+    print("TEST 4 : Break this shit")
+    code = '''
+    a <- 999999999999999999
+    b <- 999999999999999999
+    OUTPUT a + b  
+    '''
+    run_code(code)
+
+
+
+

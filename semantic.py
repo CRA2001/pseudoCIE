@@ -7,7 +7,10 @@ class Evaluator:
         for n in nodes:
             result = self.evaluate_node(n)
             if isinstance(n, tuple) and n[0] == 'OUTPUT':
-                print("OUTPUT:", result)
+                value = self.evaluate_node(n[1])
+                print("OUTPUT:", value)
+            else:
+                result = self.evaluate_node(n)
         return result
     
     def evaluate_node(self, node):
