@@ -49,7 +49,12 @@ if __name__ == '__main__':
     OUTPUT a + b  
     '''
     run_code(code)
-
+    with open("ExternalTest.txt",'r') as f:
+        code = f.read()
+        print(code)
+        run_code(code)
+    f.close()
+    
 
 
 
