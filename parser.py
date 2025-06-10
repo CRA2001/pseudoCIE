@@ -55,7 +55,6 @@ class Parser:
 				self.consume('STRING')
 			else:
 				raise SyntaxError(f"Expected NUMBER, IDENTIFIER, or STRING, got {self.current_token()}")
-
 			if op == 'PLUS':
 				left = ('ADD', left, right)
 			elif op == 'MINUS':
@@ -64,46 +63,66 @@ class Parser:
 				left = ('MULTIPLY', left, right)
 			elif op == 'DIVIDE':
 				left = ('DIVIDE', left, right)
+		while self.current_token() and self.current_token()[0] in ('GREATER_THAN','LESS_THAN','EQUAL_TO','NOT_EQUAL_TO', 'GREATER_THAN_OR_EQUAL','LESS_THAN_OR_EQUAL'):
+			op = self.current_token()[0]
+			self.consume(op)
+			right = self.parse_expr()
+			left = (op,left,right)
 
 		return left
+	def parse_if(self):
+		self.consume("IF")
+		condition = self.parse_expr()
+		self.consume("THEN")
+		then_branch = self.parse_statement()
+		else_branch = None
+		if self.current_token() and self.current_token()[0] == 'ELSE':
+			self.consume("ELSE")
+			else_branch = self.parse_statement()
+		return ('IF',condition,then_branch,else_branch)
 	
+	def parse_statement(self):
+		if self.current_token()[0] == "IDENTIFIER" and self.tokens[self.pos+1][0] == 'ASSIGN':
+			var_name = self.current_token()[1]
+			self.consume('IDENTIFIER')
+			self.consume('ASSIGN')
+			expr = self.parse_expr() #parse from the right hand side
+			return ('ASSIGN',var_name,expr)
+		elif self.current_token()[0] == "OUTPUT":
+			self.consume('OUTPUT')
+			expr = self.parse_expr()
+			return ("OUTPUT",expr)
+		elif self.current_token()[0] == "IF":
+			return self.parse_if()
+		
+		else:
+			return self.parse_expr()
+		
+
 	def parse(self):
 		statements = []
 		while self.current_token():
-			if self.current_token()[0] == "IDENTIFIER" and self.tokens[self.pos+1][0] == 'ASSIGN':
-				var_name = self.current_token()[1]
-				self.consume('IDENTIFIER')
-				self.consume('ASSIGN')
-				expr = self.parse_expr() #parse from the right hand side
-				statements.append(('ASSIGN',var_name,expr))
-			elif self.current_token()[0] == "OUTPUT":
-				self.consume('OUTPUT')
-				expr = self.parse_expr()
-				statements.append(("OUTPUT",expr))
-			
-			else:
-				statements.append(self.parse_expr())
+			statements.append(self.parse_statement())
 		return statements
 
-# if __name__ == "__main__":
-# 	print("Test 1 : Test of new code on single line codes: ")
-# 	pseudocode = "x <- 2 + 1"
-# 	l = Lexer(pseudocode)
-# 	tokens = l.tokenize()
-# 	tokens("Tokens")
-# 	print(tokens)
-# 	p = Parser(tokens)
-# 	ast = p.parse()
-# 	print("AST: ", ast)
-	# print("Test 1: Multiline code:")
-	# pseudocode = '''
-	# x <- 2 + 1
-	# y <- 3 + 4
-	# '''
-	# l = Lexer(pseudocode)
-	# tokens = l.tokenize()
-	# print("Tokens")
-	# print(tokens)
-	# p = Parser(tokens)
-	# ast = p.parse()
-	# print("AST: ", ast)
+if __name__ == "__main__":
+	test_code_1 = '''
+	x <- 5
+	OUTPUT x
+	'''
+	l = Lexer(test_code_1)
+	t = l.tokenize()
+	print("Tokens: \n ", t)
+	p = Parser(t)
+	print("AST: ",p.parse())
+
+	test_code_2 = '''
+	x <-5 
+	IF x > 2 THEN
+		OUTPUT x
+	'''
+	l = Lexer(test_code_2)
+	t = l.tokenize()
+	print("TOKENS : \n ",  t)
+	p = Parser(t)
+	print('AST: ', p.parse())
