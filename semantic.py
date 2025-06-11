@@ -38,7 +38,31 @@ class Evaluator:
 
         elif node[0] == 'OUTPUT':
             return self.evaluate_node(node[1])
+        elif node[0] == 'IF':
+            condition  = self.evaluate_node(node[1])
+            if condition:
+                return self.evaluate_node(node[2])
+            elif node[3] is not None:
+                return self.evaluate_node(node[3])
+            else: 
+                return None
 
+        elif node[0] in ('GREATER_THAN','LESS_THAN','EQUAL_TO','NOT_EQUAL_TO','GREATER_THAN_OR_EQUAL','LESS_THAN_OR_EQUAL'):
+            left = self.evaluate_node(node[1])
+            right = self.evaluate_node(node[2])
+            if node[0] == 'GREATER_THAN':
+                return left > right 
+            if node[0] == 'LESS_THAN':
+                return left < right
+            if node[0] == 'EQUAL_TO':
+                return left == right
+            if node[0] == 'NOT_EQUAL_TO':
+                return left != right
+            if node[0] == 'GREATER_THAN_OR_EQUAL':
+                return left >= right
+            if node[0] == 'LESS_THAN_OR_EQUAL':
+                return left <= right
+            
         elif isinstance(node, str):  # IDENTIFIER
             return self.variables.get(node, 0)
 
