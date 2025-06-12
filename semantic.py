@@ -8,7 +8,6 @@ class Evaluator:
             result = self.evaluate_node(n)
             if isinstance(n, tuple) and n[0] == 'OUTPUT':
                 value = self.evaluate_node(n[1])
-                print("OUTPUT:", value)
             else:
                 result = self.evaluate_node(n)
         return result
@@ -38,12 +37,13 @@ class Evaluator:
 
         elif node[0] == 'OUTPUT':
             return self.evaluate_node(node[1])
+        
         elif node[0] == 'IF':
             condition  = self.evaluate_node(node[1])
             if condition:
-                return self.evaluate_node(node[2])
+                return self.evaluate(node[2]) if isinstance(node[2], list) else self.evaluate_node(node[2])
             elif node[3] is not None:
-                return self.evaluate_node(node[3])
+                return self.evaluate(node[3]) if isinstance(node[3],list) else self.evaluate_node(node[3])
             else: 
                 return None
 

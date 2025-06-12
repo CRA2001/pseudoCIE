@@ -11,6 +11,7 @@ class Lexer:
             ('IF',r'\bIF\b'),
             ('THEN',r'\bTHEN\b'),
             ('ELSE',r'\bELSE\b'),
+            ('ENDIF',r'\bENDIF\b'),
             ("COMMENT",r'//.*'), #comments
             ("REAL",r'\d+\.\d+'),
             ("STRING",r'"[^"]*"'),
@@ -59,73 +60,18 @@ class Lexer:
         return self.tokens
     
 if __name__ == '__main__':
-    # test_code_1 = '''
-    # x <- 5
-    # OUTPUT x
-    # '''
-
-    # l = Lexer(test_code_1)
-    # t = l.tokenize()
-    # print(t)
     print("TEST CODE 1: ")
     test_code_1 = '''
-    IF x > 10 THEN 
-        OUTPUT "Greater"
-    ELSE
-        OUTPUT "Smaller or equal"
+    a <- 4
+    IF a < 5 THEN
+        a <- a + 1
+        OUTPUT "Variable a has increased by 1"
+    ELSE 
+        OUTPUT "BRUH"
+
+    OUTPUT a
     '''
     l = Lexer(test_code_1)
     t = l.tokenize()
     print(t)
-    print("\n \n ")
-    print("TEST CODE 2: ")
-    test_code_2 = '''
-     IF temperature <= 100 THEN
-        OUTPUT "Not Boiling"
-     ELSE 
-        OUTPUT "Boiling"
-    '''
-    l = Lexer(test_code_2)
-    t = l.tokenize()
-    print(t)
-    print("\n \n ")
-    print("TEST CODE 3: ")
-    test_code_3 = '''
-    IF age >= 18 THEN
-        OUTPUT "Legal"
-    ELSE
-        OUTPUT "Minor"
-    '''
-    l = Lexer(test_code_3)
-    t = l.tokenize()
-    print(t)
-    print("\n \n ")
-    print("TEST CODE 4: ")
-    test_code_4 = '''
-    IF gender == "m" THEN
-        OUTPUT "Male"
-    ELSE
-        OUTPUT "Female"
-    '''
-    l = Lexer(test_code_3)
-    t = l.tokenize()
-    print(t)
-    print("\n \n ")
-    print("TEST CODE 4: ")
-    test_code_4 = '''
-    IF gender != "m" THEN
-        OUTPUT "Female"
-    ELSE
-        OUTPUT "Male"
-    '''
-    l = Lexer(test_code_4)
-    t = l.tokenize()
-    print(t)
-
-
-
-
-
-
-
-
+ 

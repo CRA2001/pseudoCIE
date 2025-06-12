@@ -70,15 +70,28 @@ class Parser:
 			left = (op,left,right)
 
 		return left
+
+	def parse_block_until(self,stop_token):
+		block = []
+		while self.current_token() and self.current_token()[0] not in stop_token:
+			block.append(self.parse_statement())
+		return block
+	
 	def parse_if(self):
 		self.consume("IF")
 		condition = self.parse_expr()
 		self.consume("THEN")
-		then_branch = self.parse_statement()
-		else_branch = None
+
+		then_branch = self.parse_block_until(['ELSE','ENDIF'])
+		token = self.current_token()
 		if self.current_token() and self.current_token()[0] == 'ELSE':
 			self.consume("ELSE")
-			else_branch = self.parse_statement()
+			else_branch = self.parse_block_until(['ENDIF'])
+			self.consume('ENDIF')
+		else:
+			else_branch = None
+			self.consume('ENDIF')
+
 		return ('IF',condition,then_branch,else_branch)
 	
 	def parse_statement(self):
@@ -107,22 +120,35 @@ class Parser:
 
 if __name__ == "__main__":
 	test_code_1 = '''
-	x <- 5
-	OUTPUT x
+	a <- 4
+	IF a < 5 THEN
+		a <- a + 1
+		OUTPUT "Variable a has increased by 1"
+	ELSE 
+		OUTPUT "BRUH"
+
+	OUTPUT a
 	'''
 	l = Lexer(test_code_1)
 	t = l.tokenize()
 	print("Tokens: \n ", t)
 	p = Parser(t)
 	print("AST: ",p.parse())
-
+	print("\n \n TEST 2")
 	test_code_2 = '''
-	x <-5 
-	IF x > 2 THEN
-		OUTPUT x
+	a <- 4
+	IF a < 5 THEN
+		a <- a + 1
+		OUTPUT "Output 1"
+		OUTPUT "Output 2"
+	ELSE 
+		OUTPUT "Output 3"
+		OUTPUT "Output 4"
+
+	OUTPUT a
 	'''
 	l = Lexer(test_code_2)
 	t = l.tokenize()
-	print("TOKENS : \n ",  t)
+	print("Tokens: \n ", t)
 	p = Parser(t)
-	print('AST: ', p.parse())
+	print("AST: ",p.parse())

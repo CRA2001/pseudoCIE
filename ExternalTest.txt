@@ -1,4 +1,9 @@
-a <- 5 // intializing
-b <- a + 5 //adding 5 to the value of a and assigning it to b
-c <- b + 5
-OUTPUT c //displaying it
+a <- 4
+IF a < 5 THEN
+    a <- a + 1
+    OUTPUT "Variable a has increased by 1"
+ELSE 
+    OUTPUT "BRUH"
+ENDIF
+
+OUTPUT a
