@@ -8,6 +8,7 @@ class Lexer:
         #token patterns that will be compared with the code given, where each pattern will be a tuple (<type category of tuple>, <regEx_pattern>) 
         self.t_spec = [
             ('OUTPUT',r'\bOUTPUT\b'),
+            ('INPUT',r'\bINPUT\b'),
             ('IF',r'\bIF\b'),
             ('THEN',r'\bTHEN\b'),
             ('ELSE',r'\bELSE\b'),
@@ -62,13 +63,7 @@ class Lexer:
 if __name__ == '__main__':
     print("TEST CODE 1: ")
     test_code_1 = '''
-    a <- 4
-    IF a < 5 THEN
-        a <- a + 1
-        OUTPUT "Variable a has increased by 1"
-    ELSE 
-        OUTPUT "BRUH"
-
+    INPUT a
     OUTPUT a
     '''
     l = Lexer(test_code_1)
