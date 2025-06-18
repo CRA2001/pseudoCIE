@@ -5,9 +5,10 @@ class Evaluator:
     def evaluate(self, nodes):
         result = None
         for n in nodes:
-            result = self.evaluate_node(n)
             if isinstance(n, tuple) and n[0] == 'OUTPUT':
                 value = self.evaluate_node(n[1])
+                result = value
+                print(value)
             else:
                 result = self.evaluate_node(n)
         return result
@@ -36,6 +37,7 @@ class Evaluator:
             return self.evaluate_node(node[1]) / self.evaluate_node(node[2])
 
         elif node[0] == 'OUTPUT':
+            print(self)
             return self.evaluate_node(node[1])
         
         elif node[0] == 'IF':
@@ -62,7 +64,18 @@ class Evaluator:
                 return left >= right
             if node[0] == 'LESS_THAN_OR_EQUAL':
                 return left <= right
-            
+        elif node[0] == 'INPUT':
+            var_name = node[1]
+            value = input(f"{var_name}:")
+            try:
+                value = int(value)
+            except ValueError:
+                try:
+                    value = float(value)
+                except ValueError:
+                    pass
+            self.variables[var_name] = value
+            return value
         elif isinstance(node, str):  # IDENTIFIER
             return self.variables.get(node, 0)
 
