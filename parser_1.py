@@ -77,6 +77,24 @@ class Parser:
 			block.append(self.parse_statement())
 		return block
 	
+	def parse_for(self):
+		self.consume("FOR")
+		var_name = self.current_token()[1]
+		self.consume('IDENTIFIER')
+		self.consume('ASSIGN')
+		start = self.parse_expr()
+		self.consume('TO')
+		end = self.parse_expr()
+
+		body = self.parse_block_until(['NEXT'])
+		self.consume('NEXT')
+		next_var = self.current_token()[1]
+		self.consume('IDENTIFIER')
+
+		if next_var != var_name:
+			raise SyntaxError(f"NEXT variable '{next_var}' doesn't match FOR variable ")
+		return ('FOR',var_name,start,end,body)
+
 	def parse_if(self):
 		self.consume("IF")
 		condition = self.parse_expr()
@@ -107,7 +125,8 @@ class Parser:
 			return ("OUTPUT",expr)
 		elif self.current_token()[0] == "IF":
 			return self.parse_if()
-		
+		elif self.current_token()[0] == "FOR":
+			return self.parse_for()
 		else:
 			return self.parse_expr()
 		
@@ -120,34 +139,12 @@ class Parser:
 
 if __name__ == "__main__":
 	test_code_1 = '''
-	a <- 4
-	IF a < 5 THEN
-		a <- a + 1
-		OUTPUT "Variable a has increased by 1"
-	ELSE 
-		OUTPUT "BRUH"
-
-	OUTPUT a
+	FOR A <- 1 TO 100
+		OUTPUT A
+		OUTPUT A+1
+	NEXT A
 	'''
 	l = Lexer(test_code_1)
-	t = l.tokenize()
-	print("Tokens: \n ", t)
-	p = Parser(t)
-	print("AST: ",p.parse())
-	print("\n \n TEST 2")
-	test_code_2 = '''
-	a <- 4
-	IF a < 5 THEN
-		a <- a + 1
-		OUTPUT "Output 1"
-		OUTPUT "Output 2"
-	ELSE 
-		OUTPUT "Output 3"
-		OUTPUT "Output 4"
-
-	OUTPUT a
-	'''
-	l = Lexer(test_code_2)
 	t = l.tokenize()
 	print("Tokens: \n ", t)
 	p = Parser(t)
