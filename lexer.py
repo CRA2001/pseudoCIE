@@ -13,6 +13,9 @@ class Lexer:
             ('THEN',r'\bTHEN\b'),
             ('ELSE',r'\bELSE\b'),
             ('ENDIF',r'\bENDIF\b'),
+            ('FOR',r'\bFOR\b'),
+            ('TO',r'\bTO\b'),
+            ('NEXT',r'\bNEXT\b'),
             ("COMMENT",r'//.*'), #comments
             ("REAL",r'\d+\.\d+'),
             ("STRING",r'"[^"]*"'),
@@ -63,8 +66,9 @@ class Lexer:
 if __name__ == '__main__':
     print("TEST CODE 1: ")
     test_code_1 = '''
-    INPUT a
-    OUTPUT a
+    FOR A <- 1 TO 5
+        OUTPUT A
+    NEXT A
     '''
     l = Lexer(test_code_1)
     t = l.tokenize()
