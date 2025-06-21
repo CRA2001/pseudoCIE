@@ -76,7 +76,7 @@ class Evaluator:
                     pass
             self.variables[var_name] = value
             return value
-        elif node[0] == 'FOR':
+        elif node[0] == 'FOR' : 
             var_name, start_expr, end_expr,body = node[1],node[2],node[3],node[4]
             start = self.evaluate_node(start_expr)
             end = self.evaluate_node(end_expr)
