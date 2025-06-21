@@ -16,6 +16,9 @@ class Lexer:
             ('FOR',r'\bFOR\b'),
             ('TO',r'\bTO\b'),
             ('NEXT',r'\bNEXT\b'),
+            ('WHILE',r'\bWHILE\b'),
+            ('DO',r'\bDO\b'),
+            ('END_WHILE',r'\bEND\sWHILE\b'),
             ("COMMENT",r'//.*'), #comments
             ("REAL",r'\d+\.\d+'),
             ("STRING",r'"[^"]*"'),
@@ -66,9 +69,10 @@ class Lexer:
 if __name__ == '__main__':
     print("TEST CODE 1: ")
     test_code_1 = '''
-    FOR A <- 1 TO 5
-        OUTPUT A
-    NEXT A
+    WHILE a > 5 DO
+        OUTPUT a
+        a <- a +  1
+    END WHILE
     '''
     l = Lexer(test_code_1)
     t = l.tokenize()
