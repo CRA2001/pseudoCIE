@@ -1,6 +1,6 @@
 #importing all the other parts of the compiler
 from lexer import Lexer
-from parser import Parser
+from parser_1 import Parser
 from semantic import Evaluator
 
 def run_code(code):
