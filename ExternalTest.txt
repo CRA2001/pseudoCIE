@@ -1,9 +1,3 @@
-a <- 4
-IF a < 5 THEN
-    a <- a + 1
-    OUTPUT "Variable a has increased by 1"
-ELSE 
-    OUTPUT "BRUH"
-ENDIF
-
-OUTPUT a
+FOR A <- 1 TO 100
+    OUTPUT A
+NEXT A
