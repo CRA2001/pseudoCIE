@@ -87,6 +87,11 @@ class Evaluator:
                 self.evaluate(body)
                 self.variables[var_name] += 1
             return None
+        elif node[0] == 'WHILE':
+            condition = node[1]
+            body = node[2]
+            while self.evaluate_node(condition):
+                self.evaluate(body) if isinstance(body,list) else self.evaluate_node(body)
 
         elif isinstance(node, str):  # IDENTIFIER
             return self.variables.get(node, 0)

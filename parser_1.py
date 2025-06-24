@@ -77,6 +77,14 @@ class Parser:
 			block.append(self.parse_statement())
 		return block
 	
+	def parse_while(self):
+		self.consume('WHILE')
+		condition = self.parse_expr()
+		self.consume('DO')
+		body = self.parse_block_until(['END_WHILE'])
+		self.consume('END_WHILE')
+		return ('WHILE',condition,body)
+	
 	def parse_for(self):
 		self.consume("FOR")
 		var_name = self.current_token()[1]
@@ -94,6 +102,7 @@ class Parser:
 		if next_var != var_name:
 			raise SyntaxError(f"NEXT variable '{next_var}' doesn't match FOR variable ")
 		return ('FOR',var_name,start,end,body)
+	
 
 	def parse_if(self):
 		self.consume("IF")
@@ -127,6 +136,8 @@ class Parser:
 			return self.parse_if()
 		elif self.current_token()[0] == "FOR":
 			return self.parse_for()
+		elif self.current_token()[0] == "WHILE":
+			return self.parse_while()
 		else:
 			return self.parse_expr()
 		
@@ -139,10 +150,10 @@ class Parser:
 
 if __name__ == "__main__":
 	test_code_1 = '''
-	FOR A <- 1 TO 100
-		OUTPUT A
-		OUTPUT A+1
-	NEXT A
+	WHILE a < 10 DO
+		OUTPUT a
+		a <- a + 1
+	END WHILE
 	'''
 	l = Lexer(test_code_1)
 	t = l.tokenize()
