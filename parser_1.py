@@ -121,6 +121,12 @@ class Parser:
 
 		return ('IF',condition,then_branch,else_branch)
 	
+	def parse_input(self):
+		self.consume('INPUT')
+		var_name = self.current_token()[1]
+		self.consume('IDENTIFIER')
+		return ('INPUT',var_name)
+	
 	def parse_statement(self):
 		if self.current_token()[0] == "IDENTIFIER" and self.tokens[self.pos+1][0] == 'ASSIGN':
 			var_name = self.current_token()[1]
@@ -132,6 +138,8 @@ class Parser:
 			self.consume('OUTPUT')
 			expr = self.parse_expr()
 			return ("OUTPUT",expr)
+		elif self.current_token()[0] == "INPUT":
+			return self.parse_input()
 		elif self.current_token()[0] == "IF":
 			return self.parse_if()
 		elif self.current_token()[0] == "FOR":
@@ -147,16 +155,3 @@ class Parser:
 		while self.current_token():
 			statements.append(self.parse_statement())
 		return statements
-
-if __name__ == "__main__":
-	test_code_1 = '''
-	WHILE a < 10 DO
-		OUTPUT a
-		a <- a + 1
-	END WHILE
-	'''
-	l = Lexer(test_code_1)
-	t = l.tokenize()
-	print("Tokens: \n ", t)
-	p = Parser(t)
-	print("AST: ",p.parse())
