@@ -1,3 +1,2 @@
-FOR A <- 1 TO 100
-    OUTPUT A
-NEXT A
+x <- "hello"
+OUTPUT x + " world"

@@ -23,6 +23,11 @@ class Lexer:
             ("REAL",r'\d+\.\d+'),
             ("STRING",r'"[^"]*"'),
             ("BOOLEAN",r'\bTRUE\b|\bFALSE\b'),
+            ('DECLARE',r'\bDECLARE\b'),
+            ('COLON',r'\:'),
+            ('INTEGER_DTYPE',r'\bINTEGER\b'),
+            ('REAL_DTYPE',r'\bREAL\b'),
+            ('BOOLEAN_DTYPE',r'\bBOOLEAN\b'),
             ("IDENTIFIER",r'\b[a-zA-Z_][a-zA-Z0-9_]*\b'),
             ('ASSIGN','<-'),            
             ('NUMBER',r'\b\d+\b'),
@@ -69,10 +74,7 @@ class Lexer:
 if __name__ == '__main__':
     print("TEST CODE 1: ")
     test_code_1 = '''
-    WHILE a > 5 DO
-        OUTPUT a
-        a <- a +  1
-    END WHILE
+    DECLARE Var_1 : INTEGER
     '''
     l = Lexer(test_code_1)
     t = l.tokenize()
