@@ -103,6 +103,25 @@ class Parser:
 			raise SyntaxError(f"NEXT variable '{next_var}' doesn't match FOR variable ")
 		return ('FOR',var_name,start,end,body)
 	
+	def parse_declare(self):
+		self.consume('DECLARE')  # You shall declare
+
+		var_name = self.current_token()[1]
+		self.consume('IDENTIFIER')  # Got your variable name
+
+		self.consume('COLON')  # Expect the colon of declaration
+
+		# Now comes the datatype check — be suspicious
+		if self.current_token()[0] in ('INTEGER_DTYPE', 'REAL_DTYPE', 'BOOLEAN_DTYPE'):
+			data_type = self.current_token()[0]
+			self.consume(data_type)  # Welcome aboard, verified datatype
+		else:
+			# WHO THE HELL ARE YOU?
+			raise SyntaxError(f"WHO THE HELL ARE YOU? Got: {self.current_token()}, expected a legit datatype.")
+
+		return ('DECLARE', var_name, data_type)
+
+
 
 	def parse_if(self):
 		self.consume("IF")
@@ -134,6 +153,8 @@ class Parser:
 			self.consume('ASSIGN')
 			expr = self.parse_expr() #parse from the right hand side
 			return ('ASSIGN',var_name,expr)
+		elif self.current_token()[0] == "DECLARE":
+			return self.parse_declare()
 		elif self.current_token()[0] == "OUTPUT":
 			self.consume('OUTPUT')
 			expr = self.parse_expr()
@@ -155,3 +176,15 @@ class Parser:
 		while self.current_token():
 			statements.append(self.parse_statement())
 		return statements
+	
+if __name__ == '__main__':
+    print("TEST CODE 1: ")
+    test_code_1 = '''
+    DECLARE Var_1 : INTEGER
+    '''
+    l = Lexer(test_code_1)
+    t = l.tokenize()
+    p = Parser(t)  # You forgot to instantiate the class!
+    print(p.parse())  # You need to call parse()
+
+ 
