@@ -117,7 +117,7 @@ class Parser:
 			self.consume(data_type)  # Welcome aboard, verified datatype
 		else:
 			# WHO THE HELL ARE YOU?
-			raise SyntaxError(f"WHO THE HELL ARE YOU? Got: {self.current_token()}, expected a legit datatype.")
+			raise SyntaxError(f"Got : {self.current_token()}, expected a datatype: INTEGER_DTYPE', 'REAL_DTYPE', 'BOOLEAN_DTYPe")
 
 		return ('DECLARE', var_name, data_type)
 
