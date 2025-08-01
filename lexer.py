@@ -26,6 +26,7 @@ class Lexer:
             ('DECLARE',r'\bDECLARE\b'),
             ('COLON',r'\:'),
             ('INTEGER_DTYPE',r'\bINTEGER\b'),
+            ('STRING_DTYPE',r'\bSTRING\b'),
             ('REAL_DTYPE',r'\bREAL\b'),
             ('BOOLEAN_DTYPE',r'\bBOOLEAN\b'),
             ("IDENTIFIER",r'\b[a-zA-Z_][a-zA-Z0-9_]*\b'),

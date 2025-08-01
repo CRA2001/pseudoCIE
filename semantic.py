@@ -93,6 +93,29 @@ class Evaluator:
             while self.evaluate_node(condition):
                 self.evaluate(body) if isinstance(body,list) else self.evaluate_node(body)
 
+        elif node[0] == 'DECLARE':
+            Identifier = node[1]
+            DataType = node[2]
+
+            #if identifier is already in the self.variables 
+            if Identifier in self.variables:
+                raise Exception(f"Variable {Identifier} already declared")
+            
+            #giving temporary values
+            if DataType == "INTEGER_DTYPE":
+                self.variables[Identifier] = 0
+            elif DataType == "REAL_DTYPE":
+                self.variables[Identifier] = 0.0
+            elif DataType == "BOOLEAN_DTYPE":
+                self.variables[Identifier] = False
+            elif DataType == "STRING_DTYPE":
+                self.variables[Identifier] = ""
+            else:
+                raise Exception(f"Unknown data type: {DataType}")
+            
+            return f"declared {Identifier} as {DataType}"
+
+
         elif isinstance(node, str):  # IDENTIFIER
             return self.variables.get(node, 0)
 
