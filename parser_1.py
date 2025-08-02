@@ -112,7 +112,7 @@ class Parser:
 		self.consume('COLON')  # Expect the colon of declaration
 
 		# Now comes the datatype check — be suspicious
-		if self.current_token()[0] in ('INTEGER_DTYPE', 'REAL_DTYPE', 'BOOLEAN_DTYPE'):
+		if self.current_token()[0] in ('INTEGER_DTYPE', 'REAL_DTYPE', 'BOOLEAN_DTYPE','STRING_DTYPE'):
 			data_type = self.current_token()[0]
 			self.consume(data_type)  # Welcome aboard, verified datatype
 		else:
