@@ -25,10 +25,12 @@ class Lexer:
             ("BOOLEAN",r'\bTRUE\b|\bFALSE\b'),
             ('DECLARE',r'\bDECLARE\b'),
             ('COLON',r'\:'),
+            ('ARRAY_DTYPE',r'\bARRAY\b'),
             ('INTEGER_DTYPE',r'\bINTEGER\b'),
             ('STRING_DTYPE',r'\bSTRING\b'),
             ('REAL_DTYPE',r'\bREAL\b'),
             ('BOOLEAN_DTYPE',r'\bBOOLEAN\b'),
+            ('BOUNDS',r'\[\d+\:\d+\]'),
             ("IDENTIFIER",r'\b[a-zA-Z_][a-zA-Z0-9_]*\b'),
             ('ASSIGN','<-'),            
             ('NUMBER',r'\b\d+\b'),
@@ -75,9 +77,9 @@ class Lexer:
 if __name__ == '__main__':
     print("TEST CODE 1: ")
     test_code_1 = '''
-    DECLARE Var_1 : INTEGER
+    DECLARE Temperatures:ARRAY [1:100] OF REAL
     '''
     l = Lexer(test_code_1)
     t = l.tokenize()
     print(t)
- 
+
