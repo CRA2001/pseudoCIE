@@ -111,6 +111,16 @@ class Parser:
 
 		self.consume('COLON')  # Expect the colon of declaration
 
+		if self.current_token()[0] == "ARRAY_DTYPE":
+			self.consume('ARRAY_D_TYPE')
+			bounds = self.current_token[1] # example: [1:5]
+			self.consume(bounds)
+			self.consume("OF")
+			base_type = self.current_token[0] #STRING_DTYPE
+
+			return ('DECLARE',var_name, ('ARRAY',bounds,base_type)) 
+
+
 		# Now comes the datatype check — be suspicious
 		if self.current_token()[0] in ('INTEGER_DTYPE', 'REAL_DTYPE', 'BOOLEAN_DTYPE','STRING_DTYPE'):
 			data_type = self.current_token()[0]
