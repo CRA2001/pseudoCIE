@@ -104,30 +104,34 @@ class Parser:
 		return ('FOR',var_name,start,end,body)
 	
 	def parse_declare(self):
-		self.consume('DECLARE')  # You shall declare
+		self.consume('DECLARE')  
 
 		var_name = self.current_token()[1]
-		self.consume('IDENTIFIER')  # Got your variable name
+		self.consume('IDENTIFIER')  
 
-		self.consume('COLON')  # Expect the colon of declaration
+		self.consume('COLON')  
 
 		if self.current_token()[0] == "ARRAY_DTYPE":
-			self.consume('ARRAY_D_TYPE')
-			bounds = self.current_token[1] # example: [1:5]
-			self.consume(bounds)
-			self.consume("OF")
-			base_type = self.current_token[0] #STRING_DTYPE
+			self.consume('ARRAY_DTYPE')
+			
+			bounds = self.current_token()[1]  # example: [1:5]
+			self.consume('BOUND')
+			
+			self.consume('OF')
+			
+			base_type = self.current_token()[0]  # STRING_DTYPE, INTEGER_DTYPE, etc.
+			self.consume(base_type)
+			
+			return ('DECLARE', var_name, ('ARRAY', bounds, base_type))
 
-			return ('DECLARE',var_name, ('ARRAY',bounds,base_type)) 
-
-
-		# Now comes the datatype check — be suspicious
-		if self.current_token()[0] in ('INTEGER_DTYPE', 'REAL_DTYPE', 'BOOLEAN_DTYPE','STRING_DTYPE'):
-			data_type = self.current_token()[0]
-			self.consume(data_type)  # Welcome aboard, verified datatype
 		else:
-			# WHO THE HELL ARE YOU?
-			raise SyntaxError(f"Got : {self.current_token()}, expected a datatype: INTEGER_DTYPE', 'REAL_DTYPE', 'BOOLEAN_DTYPe")
+			if self.current_token()[0] in ('INTEGER_DTYPE', 'REAL_DTYPE', 'BOOLEAN_DTYPE', 'STRING_DTYPE'):
+				data_type = self.current_token()[0]
+				self.consume(data_type)
+			else:
+				raise SyntaxError(
+					f"Got: {self.current_token()}, expected a datatype: INTEGER_DTYPE, REAL_DTYPE, BOOLEAN_DTYPE, STRING_DTYPE"
+				)
 
 		return ('DECLARE', var_name, data_type)
 
@@ -190,7 +194,10 @@ class Parser:
 if __name__ == '__main__':
     print("TEST CODE 1: ")
     test_code_1 = '''
-    DECLARE Var_1 : INTEGER
+    DECLARE count : INTEGER
+	DECLARE fruits : ARRAY[1:10] OF STRING
+	DECLARE price : REAL
+
     '''
     l = Lexer(test_code_1)
     t = l.tokenize()
