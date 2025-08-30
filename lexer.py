@@ -7,46 +7,56 @@ class Lexer:
         self.pos = 0 #used to track the scanning process in lexical analysis
         #token patterns that will be compared with the code given, where each pattern will be a tuple (<type category of tuple>, <regEx_pattern>) 
         self.t_spec = [
-            ('OUTPUT',r'\bOUTPUT\b'),
-            ('INPUT',r'\bINPUT\b'),
-            ('IF',r'\bIF\b'),
-            ('THEN',r'\bTHEN\b'),
-            ('ELSE',r'\bELSE\b'),
-            ('ENDIF',r'\bENDIF\b'),
-            ('FOR',r'\bFOR\b'),
-            ('TO',r'\bTO\b'),
-            ('NEXT',r'\bNEXT\b'),
-            ('WHILE',r'\bWHILE\b'),
-            ('DO',r'\bDO\b'),
-            ('END_WHILE',r'\bEND\sWHILE\b'),
-            ("COMMENT",r'//.*'), #comments
-            ("REAL",r'\d+\.\d+'),
-            ("STRING",r'"[^"]*"'),
-            ("BOOLEAN",r'\bTRUE\b|\bFALSE\b'),
-            ('DECLARE',r'\bDECLARE\b'),
-            ('COLON',r'\:'),
-            ('ARRAY_DTYPE',r'\bARRAY\b'),
-            ('INTEGER_DTYPE',r'\bINTEGER\b'),
-            ('STRING_DTYPE',r'\bSTRING\b'),
-            ('REAL_DTYPE',r'\bREAL\b'),
-            ('BOOLEAN_DTYPE',r'\bBOOLEAN\b'),
-            ('BOUNDS',r'\[\d+\:\d+\]'),
-            ("IDENTIFIER",r'\b[a-zA-Z_][a-zA-Z0-9_]*\b'),
-            ('ASSIGN','<-'),            
-            ('NUMBER',r'\b\d+\b'),
-            ('PLUS',r'\+'),
-            ('MINUS',r'\-'),
-            ('MULTIPLY',r'\*'),
-            ('DIVIDE',r'/'),
-            ('GREATER_THAN_OR_EQUAL',r">="),
-            ('LESS_THAN_OR_EQUAL',r"<="),
-            ('EQUAL_TO',r"=="),
-            ('NOT_EQUAL_TO',r'!='),
-            ('GREATER_THAN',r'>'),
-            ('LESS_THAN',r"<"),
-            ('SKIP',r'[ \t]+'),
-            ('MISMATCH',r'.')
+            # Keywords
+            ('OUTPUT', r'\bOUTPUT\b'),
+            ('INPUT', r'\bINPUT\b'),
+            ('IF', r'\bIF\b'),
+            ('THEN', r'\bTHEN\b'),
+            ('ELSE', r'\bELSE\b'),
+            ('ENDIF', r'\bENDIF\b'),
+            ('FOR', r'\bFOR\b'),
+            ('TO', r'\bTO\b'),
+            ('NEXT', r'\bNEXT\b'),
+            ('WHILE', r'\bWHILE\b'),
+            ('DO', r'\bDO\b'),
+            ('END_WHILE', r'\bEND\sWHILE\b'),
+            ('DECLARE', r'\bDECLARE\b'),
+            ('ARRAY_DTYPE', r'\bARRAY\b'),
+            ('OF', r'\bOF\b'),   # <-- NEW token for array declarations
+            ('INTEGER_DTYPE', r'\bINTEGER\b'),
+            ('REAL_DTYPE', r'\bREAL\b'),
+            ('BOOLEAN_DTYPE', r'\bBOOLEAN\b'),
+            ('STRING_DTYPE', r'\bSTRING\b'),
+
+            # Symbols
+            ('COLON', r':'),
+            ('ASSIGN', r'<-'),
+            ('BOUND', r'\[\d+\:\d+\]'),  # must come before LBRACKET
+            ('LBRACKET', r'\['),
+            ('RBRACKET', r'\]'),
+
+
+            # Others
+            ('NUMBER', r'\b\d+\b'),
+            ('REAL', r'\d+\.\d+'),
+            ('STRING', r'"[^"]*"'),
+            ('BOOLEAN', r'\bTRUE\b|\bFALSE\b'),
+            ('IDENTIFIER', r'\b[a-zA-Z_][a-zA-Z0-9_]*\b'),
+            ('PLUS', r'\+'),
+            ('MINUS', r'-'),
+            ('MULTIPLY', r'\*'),
+            ('DIVIDE', r'/'),
+            ('GREATER_THAN_OR_EQUAL', r'>='),
+            ('LESS_THAN_OR_EQUAL', r'<='),
+            ('EQUAL_TO', r'=='),
+            ('NOT_EQUAL_TO', r'!='),
+            ('GREATER_THAN', r'>'),
+            ('LESS_THAN', r'<'),
+            ('COMMENT', r'//.*'),
+            ('SKIP', r'[ \t]+'),
+            ('MISMATCH', r'.'),
         ]
+
 
         #compiling the paterns
         self.token_regex = re.compile('|'.join(f'(?P<{pair[0]}>{pair[1]})' for pair in self.t_spec ))

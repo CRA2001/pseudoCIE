@@ -194,9 +194,7 @@ class Parser:
 if __name__ == '__main__':
     print("TEST CODE 1: ")
     test_code_1 = '''
-    DECLARE count : INTEGER
 	DECLARE fruits : ARRAY[1:10] OF STRING
-	DECLARE price : REAL
 
     '''
     l = Lexer(test_code_1)
