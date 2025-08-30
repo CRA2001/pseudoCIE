@@ -97,12 +97,38 @@ class Evaluator:
             Identifier = node[1]
             DataType = node[2]
 
-            #if identifier is already in the self.variables 
             if Identifier in self.variables:
                 raise Exception(f"Variable {Identifier} already declared")
-            
-            #giving temporary values
-            if DataType == "INTEGER_DTYPE":
+
+            # Handle ARRAY separately
+            if isinstance(DataType, tuple) and DataType[0] == "ARRAY":
+                bounds = DataType[1]  # e.g. "[1:10]"
+                element_type = DataType[2]  # e.g. "STRING_DTYPE"
+
+                # parse bounds
+                lower, upper = bounds.strip("[]").split(":")
+                lower, upper = int(lower), int(upper)
+
+                size = upper - lower + 1
+
+                # pick default based on element_type
+                if element_type == "INTEGER_DTYPE":
+                    default_value = 0
+                elif element_type == "REAL_DTYPE":
+                    default_value = 0.0
+                elif element_type == "BOOLEAN_DTYPE":
+                    default_value = False
+                elif element_type == "STRING_DTYPE":
+                    default_value = ""
+                else:
+                    raise Exception(f"Unknown array element type: {element_type}")
+
+                # initialize the array
+                self.variables[Identifier] = [default_value for _ in range(size)]
+
+                return f"declared {Identifier} as ARRAY[{lower}:{upper}] of {element_type}"
+
+            elif DataType == "INTEGER_DTYPE":
                 self.variables[Identifier] = 0
             elif DataType == "REAL_DTYPE":
                 self.variables[Identifier] = 0.0
@@ -112,8 +138,9 @@ class Evaluator:
                 self.variables[Identifier] = ""
             else:
                 raise Exception(f"Unknown data type: {DataType}")
-            
+
             return f"declared {Identifier} as {DataType}"
+
 
 
         elif isinstance(node, str):  # IDENTIFIER
