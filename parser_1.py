@@ -31,8 +31,17 @@ class Parser:
 			left = self.current_token()[1]
 			self.consume('NUMBER')
 		elif self.current_token()[0] == 'IDENTIFIER':
-			left = self.current_token()[1]
+			var_name = self.current_token()[1]
 			self.consume("IDENTIFIER")
+
+			if self.current_token() and self.current_token()[0] == 'LBRACKET':
+				self.consume('LBRACKET')
+				index_expr = self.parse_expr()
+				self.consume('RBRACKET')
+				left = ('INDEX',var_name,index_expr)
+			else:
+				left = var_name
+			
 		elif self.current_token()[0] == 'STRING':
 			left = ('STRING',self.current_token()[1])
 			self.consume('STRING')
@@ -135,8 +144,6 @@ class Parser:
 
 		return ('DECLARE', var_name, data_type)
 
-
-
 	def parse_if(self):
 		self.consume("IF")
 		condition = self.parse_expr()
@@ -161,12 +168,25 @@ class Parser:
 		return ('INPUT',var_name)
 	
 	def parse_statement(self):
-		if self.current_token()[0] == "IDENTIFIER" and self.tokens[self.pos+1][0] == 'ASSIGN':
+		if self.current_token()[0] == "IDENTIFIER" and self.tokens[self.pos+1][0] in ("LBRACKET", "ASSIGN"):
 			var_name = self.current_token()[1]
 			self.consume('IDENTIFIER')
-			self.consume('ASSIGN')
-			expr = self.parse_expr() #parse from the right hand side
-			return ('ASSIGN',var_name,expr)
+			
+			# array element assignment
+			if self.current_token()[0] == "LBRACKET":
+				self.consume("LBRACKET")
+				index_expr = self.parse_expr()
+				self.consume("RBRACKET")
+				
+				self.consume("ASSIGN")
+				value_expr = self.parse_expr()
+				return ("ARRAY_ASSIGN", var_name, index_expr, value_expr)
+			
+			# normal assignment
+			elif self.current_token()[0] == "ASSIGN":
+				self.consume('ASSIGN')
+				expr = self.parse_expr()
+				return ('ASSIGN', var_name, expr)
 		elif self.current_token()[0] == "DECLARE":
 			return self.parse_declare()
 		elif self.current_token()[0] == "OUTPUT":
@@ -194,12 +214,39 @@ class Parser:
 if __name__ == '__main__':
     print("TEST CODE 1: ")
     test_code_1 = '''
-	DECLARE fruits : ARRAY[1:10] OF STRING
-
+    DECLARE fruits : ARRAY[1:10] OF STRING
     '''
     l = Lexer(test_code_1)
     t = l.tokenize()
-    p = Parser(t)  # You forgot to instantiate the class!
-    print(p.parse())  # You need to call parse()
+    p = Parser(t)
+    print(p.parse())
 
- 
+    print("TEST CODE 2: ")
+    test_code_2 = '''
+    DECLARE numbers : ARRAY[0:5] OF INTEGER
+    '''
+    l = Lexer(test_code_2)
+    t = l.tokenize()
+    p = Parser(t)
+    print(p.parse())
+
+    print("TEST CODE 4: ")
+    test_code_4 = '''
+    DECLARE fruits : ARRAY[1:5] OF STRING
+    fruits[1] <- "Apple"
+    fruits[2] <- "Banana"
+    '''
+    l = Lexer(test_code_4)
+    t = l.tokenize()
+    p = Parser(t)
+    print(p.parse())
+
+    print("TEST CODE 5: ")
+    test_code_5 = '''
+    DECLARE numbers : ARRAY[1:5] OF INTEGER
+    numbers[3] <- 42
+    '''
+    l = Lexer(test_code_5)
+    t = l.tokenize()
+    p = Parser(t)
+    print(p.parse())
