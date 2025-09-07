@@ -39,7 +39,6 @@ class Evaluator:
         elif node[0] == 'OUTPUT':
             print(self)
             return self.evaluate_node(node[1])
-        
         elif node[0] == 'IF':
             condition  = self.evaluate_node(node[1])
             if condition:
@@ -48,7 +47,6 @@ class Evaluator:
                 return self.evaluate(node[3]) if isinstance(node[3],list) else self.evaluate_node(node[3])
             else: 
                 return None
-
         elif node[0] in ('GREATER_THAN','LESS_THAN','EQUAL_TO','NOT_EQUAL_TO','GREATER_THAN_OR_EQUAL','LESS_THAN_OR_EQUAL'):
             left = self.evaluate_node(node[1])
             right = self.evaluate_node(node[2])
@@ -64,6 +62,31 @@ class Evaluator:
                 return left >= right
             if node[0] == 'LESS_THAN_OR_EQUAL':
                 return left <= right
+        elif node[0] == 'ARRAY_ASSIGN':
+            array_name, index_expr, value_expr = node[1], node[2], node[3]
+
+            if array_name not in self.variables:
+                raise Exception(f"Array {array_name} not declared")
+
+            arr = self.variables[array_name]
+
+            index = self.evaluate_node(index_expr)  # should be an int
+            value = self.evaluate_node(value_expr)
+
+            # Adjust if arrays declared as [1:n] but stored in Python as 0-indexed
+            arr[index - 1] = value
+
+            return value
+        elif node[0] == 'INDEX':
+            array_name, index_expr = node[1], node[2]
+
+            if array_name not in self.variables:
+                raise Exception(f"Array {array_name} not declared")
+
+            arr = self.variables[array_name]
+
+            index = self.evaluate_node(index_expr)
+            return arr[index - 1]              
         elif node[0] == 'INPUT':
             var_name = node[1]
             value = input(f"{var_name}:")
