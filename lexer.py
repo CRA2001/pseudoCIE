@@ -34,6 +34,7 @@ class Lexer:
             ('BOUND', r'\[\d+\:\d+\]'),  # must come before LBRACKET
             ('LBRACKET', r'\['),
             ('RBRACKET', r'\]'),
+            ("COMMA",r','),
 
 
             # Others
