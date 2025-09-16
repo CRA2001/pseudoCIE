@@ -120,29 +120,54 @@ class Parser:
 
 		self.consume('COLON')  
 
+		# Array declaration
 		if self.current_token()[0] == "ARRAY_DTYPE":
-			self.consume('ARRAY_DTYPE')
-			
-			bounds = self.current_token()[1]  # example: [1:5]
-			self.consume('BOUND')
-			
-			self.consume('OF')
-			
+			self.consume("ARRAY_DTYPE")
+
+			bounds = []
+			if self.current_token()[0] == "LBRACKET":
+				self.consume("LBRACKET")
+
+				while True:
+					# lower bound
+					lower = self.current_token()[1]
+					self.consume("NUMBER")
+					self.consume("COLON")
+					# upper bound
+					upper = self.current_token()[1]
+					self.consume("NUMBER")
+					bounds.append((int(lower), int(upper)))
+
+					# support multiple dimensions
+					if self.current_token()[0] == "COMMA":
+						self.consume("COMMA")
+						continue
+					break
+
+				self.consume("RBRACKET")
+
+			self.consume("OF")
+
 			base_type = self.current_token()[0]  # STRING_DTYPE, INTEGER_DTYPE, etc.
 			self.consume(base_type)
-			
+
 			return ('DECLARE', var_name, ('ARRAY', bounds, base_type))
 
+		# Normal declaration
 		else:
-			if self.current_token()[0] in ('INTEGER_DTYPE', 'REAL_DTYPE', 'BOOLEAN_DTYPE', 'STRING_DTYPE'):
+			if self.current_token()[0] in (
+				'INTEGER_DTYPE', 'REAL_DTYPE', 'BOOLEAN_DTYPE', 'STRING_DTYPE'
+			):
 				data_type = self.current_token()[0]
 				self.consume(data_type)
 			else:
 				raise SyntaxError(
-					f"Got: {self.current_token()}, expected a datatype: INTEGER_DTYPE, REAL_DTYPE, BOOLEAN_DTYPE, STRING_DTYPE"
+					f"Got: {self.current_token()}, expected a datatype: "
+					"INTEGER_DTYPE, REAL_DTYPE, BOOLEAN_DTYPE, STRING_DTYPE"
 				)
 
-		return ('DECLARE', var_name, data_type)
+			return ('DECLARE', var_name, data_type)
+
 
 	def parse_if(self):
 		self.consume("IF")
@@ -214,39 +239,9 @@ class Parser:
 if __name__ == '__main__':
     print("TEST CODE 1: ")
     test_code_1 = '''
-    DECLARE fruits : ARRAY[1:10] OF STRING
+    DECLARE Grid : ARRAY[1:2,1:3] OF INTEGER
     '''
     l = Lexer(test_code_1)
-    t = l.tokenize()
-    p = Parser(t)
-    print(p.parse())
-
-    print("TEST CODE 2: ")
-    test_code_2 = '''
-    DECLARE numbers : ARRAY[0:5] OF INTEGER
-    '''
-    l = Lexer(test_code_2)
-    t = l.tokenize()
-    p = Parser(t)
-    print(p.parse())
-
-    print("TEST CODE 4: ")
-    test_code_4 = '''
-    DECLARE fruits : ARRAY[1:5] OF STRING
-    fruits[1] <- "Apple"
-    fruits[2] <- "Banana"
-    '''
-    l = Lexer(test_code_4)
-    t = l.tokenize()
-    p = Parser(t)
-    print(p.parse())
-
-    print("TEST CODE 5: ")
-    test_code_5 = '''
-    DECLARE numbers : ARRAY[1:5] OF INTEGER
-    numbers[3] <- 42
-    '''
-    l = Lexer(test_code_5)
     t = l.tokenize()
     p = Parser(t)
     print(p.parse())

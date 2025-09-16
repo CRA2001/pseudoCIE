@@ -125,14 +125,8 @@ class Evaluator:
 
             # Handle ARRAY separately
             if isinstance(DataType, tuple) and DataType[0] == "ARRAY":
-                bounds = DataType[1]  # e.g. "[1:10]"
-                element_type = DataType[2]  # e.g. "STRING_DTYPE"
-
-                # parse bounds
-                lower, upper = bounds.strip("[]").split(":")
-                lower, upper = int(lower), int(upper)
-
-                size = upper - lower + 1
+                bounds = DataType[1]      # e.g. [(1,5)] or [(1,3),(1,4)]
+                element_type = DataType[2]
 
                 # pick default based on element_type
                 if element_type == "INTEGER_DTYPE":
@@ -146,11 +140,19 @@ class Evaluator:
                 else:
                     raise Exception(f"Unknown array element type: {element_type}")
 
-                # initialize the array
-                self.variables[Identifier] = [default_value for _ in range(size)]
+                # recursive initializer for multi-dimensional arrays
+                def make_array(dim):
+                    lower, upper = bounds[dim]
+                    size = upper - lower + 1
+                    if dim == len(bounds) - 1:  # last dimension
+                        return [default_value for _ in range(size)]
+                    else:
+                        return [make_array(dim + 1) for _ in range(size)]
 
-                return f"declared {Identifier} as ARRAY[{lower}:{upper}] of {element_type}"
+                self.variables[Identifier] = make_array(0)
+                return f"declared {Identifier} as ARRAY{bounds} of {element_type}"
 
+            # Scalar variable
             elif DataType == "INTEGER_DTYPE":
                 self.variables[Identifier] = 0
             elif DataType == "REAL_DTYPE":
@@ -163,6 +165,7 @@ class Evaluator:
                 raise Exception(f"Unknown data type: {DataType}")
 
             return f"declared {Identifier} as {DataType}"
+
 
 
 
