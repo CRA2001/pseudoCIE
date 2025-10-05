@@ -63,20 +63,23 @@ class Evaluator:
             if node[0] == 'LESS_THAN_OR_EQUAL':
                 return left <= right
         elif node[0] == 'ARRAY_ASSIGN':
-            array_name, index_expr, value_expr = node[1], node[2], node[3]
+            array_name, indices_expr, value_expr = node[1], node[2], node[3]
 
             if array_name not in self.variables:
                 raise Exception(f"Array {array_name} not declared")
 
             arr = self.variables[array_name]
-
-            index = self.evaluate_node(index_expr)  # should be an int
+            indices = [self.evaluate_node(idx) for idx in indices_expr]
             value = self.evaluate_node(value_expr)
 
-            # Adjust if arrays declared as [1:n] but stored in Python as 0-indexed
-            arr[index - 1] = value
+            # Adjust for 1-based pseudocode indexing
+            ref = arr
+            for i, idx in enumerate(indices[:-1]):
+                ref = ref[idx - 1]
+            ref[indices[-1] - 1] = value
 
             return value
+        
         elif node[0] == 'INDEX':
             array_name, index_expr = node[1], node[2]
 
@@ -99,6 +102,8 @@ class Evaluator:
                     pass
             self.variables[var_name] = value
             return value
+        
+        
         elif node[0] == 'FOR' : 
             var_name, start_expr, end_expr,body = node[1],node[2],node[3],node[4]
             start = self.evaluate_node(start_expr)

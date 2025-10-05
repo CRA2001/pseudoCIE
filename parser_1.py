@@ -202,33 +202,45 @@ class Parser:
 		var_name = self.current_token()[1]
 		self.consume('IDENTIFIER')
 		return ('INPUT',var_name)
-	
+		
+	def parse_array_access(self):
+		name = self.current_token()[1]
+		self.consume('IDENTIFIER')
+		self.consume('LBRACKET')
+
+		# Support multiple indices: [i], [i,j], [i,j,k], etc.
+		indices = [self.parse_expr()]
+		while self.current_token() and self.current_token()[0] == 'COMMA':
+			self.consume('COMMA')
+			indices.append(self.parse_expr())
+
+		self.consume('RBRACKET')
+		return ('INDEX', name, indices)
+
 	def parse_statement(self):
 		if self.current_token()[0] == "IDENTIFIER" and self.tokens[self.pos+1][0] in ("LBRACKET", "ASSIGN"):
-			var_name = self.current_token()[1]
-			self.consume('IDENTIFIER')
-			
-			# array element assignment
-			if self.current_token()[0] == "LBRACKET":
-				self.consume("LBRACKET")
-				index_expr = self.parse_expr()
-				self.consume("RBRACKET")
-				
+			# Peek ahead to check what kind of statement it is
+			if self.tokens[self.pos+1][0] == "LBRACKET":
+				# Parse array access (supports multiple indices)
+				array_access = self.parse_array_access()
 				self.consume("ASSIGN")
 				value_expr = self.parse_expr()
-				return ("ARRAY_ASSIGN", var_name, index_expr, value_expr)
-			
-			# normal assignment
-			elif self.current_token()[0] == "ASSIGN":
+				# array_access = ('INDEX', name, [index_exprs])
+				return ("ARRAY_ASSIGN", array_access[1], array_access[2], value_expr)
+			else:
+				# Regular variable assignment
+				var_name = self.current_token()[1]
+				self.consume('IDENTIFIER')
 				self.consume('ASSIGN')
 				expr = self.parse_expr()
 				return ('ASSIGN', var_name, expr)
+		
 		elif self.current_token()[0] == "DECLARE":
 			return self.parse_declare()
 		elif self.current_token()[0] == "OUTPUT":
 			self.consume('OUTPUT')
 			expr = self.parse_expr()
-			return ("OUTPUT",expr)
+			return ("OUTPUT", expr)
 		elif self.current_token()[0] == "INPUT":
 			return self.parse_input()
 		elif self.current_token()[0] == "IF":
@@ -239,6 +251,7 @@ class Parser:
 			return self.parse_while()
 		else:
 			return self.parse_expr()
+
 		
 
 	def parse(self):
