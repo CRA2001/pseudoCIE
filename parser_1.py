@@ -113,61 +113,72 @@ class Parser:
 		return ('FOR',var_name,start,end,body)
 	
 	def parse_declare(self):
-		self.consume('DECLARE')  
-
+		self.consume('DECLARE')
 		var_name = self.current_token()[1]
-		self.consume('IDENTIFIER')  
+		self.consume('IDENTIFIER')
+		self.consume('COLON')
 
-		self.consume('COLON')  
-
-		# Array declaration
+		# --- ARRAY declarations ---
 		if self.current_token()[0] == "ARRAY_DTYPE":
-			self.consume("ARRAY_DTYPE")
+			self.consume('ARRAY_DTYPE')
 
-			bounds = []
-			if self.current_token()[0] == "LBRACKET":
-				self.consume("LBRACKET")
+			bounds_list = []
 
+			# Case 1: single-token bound like "[1:5]"
+			if self.current_token()[0] == 'BOUND':
+				raw_bounds = self.current_token()[1]  # "[1:5]" or "[1:2,1:3]"
+				self.consume('BOUND')
+
+				# Handle multi-dimensional inside single token
+				raw_bounds = raw_bounds.strip('[]')
+				for part in raw_bounds.split(','):
+					lo, hi = part.split(':')
+					bounds_list.append((int(lo), int(hi)))
+
+			# Case 2: expanded token form [ 1 : 3 , 1 : 4 ]
+			elif self.current_token()[0] == 'LBRACKET':
+				self.consume('LBRACKET')
 				while True:
-					# lower bound
-					lower = self.current_token()[1]
-					self.consume("NUMBER")
-					self.consume("COLON")
-					# upper bound
-					upper = self.current_token()[1]
-					self.consume("NUMBER")
-					bounds.append((int(lower), int(upper)))
+					if self.current_token()[0] != 'NUMBER':
+						raise SyntaxError(f"Expected NUMBER in array bounds, got {self.current_token()}")
+					lo = int(self.current_token()[1])
+					self.consume('NUMBER')
 
-					# support multiple dimensions
-					if self.current_token()[0] == "COMMA":
-						self.consume("COMMA")
+					self.consume('COLON')
+
+					if self.current_token()[0] != 'NUMBER':
+						raise SyntaxError(f"Expected NUMBER in array bounds, got {self.current_token()}")
+					hi = int(self.current_token()[1])
+					self.consume('NUMBER')
+
+					bounds_list.append((lo, hi))
+
+					if self.current_token() and self.current_token()[0] == 'COMMA':
+						self.consume('COMMA')
 						continue
 					break
+				self.consume('RBRACKET')
+			else:
+				raise SyntaxError(f"Expected array bounds after ARRAY, got {self.current_token()}")
 
-				self.consume("RBRACKET")
+			self.consume('OF')
 
-			self.consume("OF")
+			if self.current_token()[0] not in ('INTEGER_DTYPE', 'REAL_DTYPE', 'BOOLEAN_DTYPE', 'STRING_DTYPE'):
+				raise SyntaxError(f"Expected base type after OF, got {self.current_token()}")
 
-			base_type = self.current_token()[0]  # STRING_DTYPE, INTEGER_DTYPE, etc.
+			base_type = self.current_token()[0]
 			self.consume(base_type)
 
-			return ('DECLARE', var_name, ('ARRAY', bounds, base_type))
+			return ('DECLARE', var_name, ('ARRAY', bounds_list, base_type))
 
-		# Normal declaration
-		else:
-			if self.current_token()[0] in (
-				'INTEGER_DTYPE', 'REAL_DTYPE', 'BOOLEAN_DTYPE', 'STRING_DTYPE'
-			):
-				data_type = self.current_token()[0]
-				self.consume(data_type)
-			else:
-				raise SyntaxError(
-					f"Got: {self.current_token()}, expected a datatype: "
-					"INTEGER_DTYPE, REAL_DTYPE, BOOLEAN_DTYPE, STRING_DTYPE"
-				)
-
+		# --- Scalar declarations ---
+		elif self.current_token()[0] in ('INTEGER_DTYPE', 'REAL_DTYPE', 'BOOLEAN_DTYPE', 'STRING_DTYPE'):
+			data_type = self.current_token()[0]
+			self.consume(data_type)
 			return ('DECLARE', var_name, data_type)
 
+		else:
+			raise SyntaxError(f"Got: {self.current_token()}, expected datatype or ARRAY")
 
 	def parse_if(self):
 		self.consume("IF")
