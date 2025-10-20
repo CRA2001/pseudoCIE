@@ -25,7 +25,9 @@ class Parser:
 		else:
 		#if it isn't then raise a syntax error
 			raise SyntaxError(f"Expected token type: {token_type}, got {self.current_token()} instead")
-		
+
+
+	#handling the expressions	
 	def parse_expr(self):
 		if self.current_token()[0] == 'NUMBER':
 			left = self.current_token()[1]
@@ -80,12 +82,14 @@ class Parser:
 
 		return left
 
+
 	def parse_block_until(self,stop_token):
 		block = []
 		while self.current_token() and self.current_token()[0] not in stop_token:
 			block.append(self.parse_statement())
 		return block
 	
+	#handling while loops
 	def parse_while(self):
 		self.consume('WHILE')
 		condition = self.parse_expr()
@@ -93,7 +97,7 @@ class Parser:
 		body = self.parse_block_until(['END_WHILE'])
 		self.consume('END_WHILE')
 		return ('WHILE',condition,body)
-	
+	#handling for loops
 	def parse_for(self):
 		self.consume("FOR")
 		var_name = self.current_token()[1]
@@ -112,6 +116,7 @@ class Parser:
 			raise SyntaxError(f"NEXT variable '{next_var}' doesn't match FOR variable ")
 		return ('FOR',var_name,start,end,body)
 	
+	#handling declare keyword
 	def parse_declare(self):
 		self.consume('DECLARE')
 		var_name = self.current_token()[1]
@@ -180,6 +185,7 @@ class Parser:
 		else:
 			raise SyntaxError(f"Got: {self.current_token()}, expected datatype or ARRAY")
 
+	#handling the if statements
 	def parse_if(self):
 		self.consume("IF")
 		condition = self.parse_expr()
@@ -197,12 +203,14 @@ class Parser:
 
 		return ('IF',condition,then_branch,else_branch)
 	
+	#handling input from user 
 	def parse_input(self):
 		self.consume('INPUT')
 		var_name = self.current_token()[1]
 		self.consume('IDENTIFIER')
 		return ('INPUT',var_name)
-		
+
+	#handling array index access of values	
 	def parse_array_access(self):
 		name = self.current_token()[1]
 		self.consume('IDENTIFIER')
@@ -217,6 +225,7 @@ class Parser:
 		self.consume('RBRACKET')
 		return ('INDEX', name, indices)
 
+	#handling the calls of methods for each token based on the type of token
 	def parse_statement(self):
 		if self.current_token()[0] == "IDENTIFIER" and self.tokens[self.pos+1][0] in ("LBRACKET", "ASSIGN"):
 			# Peek ahead to check what kind of statement it is
@@ -253,7 +262,7 @@ class Parser:
 			return self.parse_expr()
 
 		
-
+	#returns abstract syntax tree
 	def parse(self):
 		statements = []
 		while self.current_token():

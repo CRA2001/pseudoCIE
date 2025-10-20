@@ -7,13 +7,9 @@ def run_code(code):
     #step 1: tokenize the code
     lexer = Lexer(code)
     tokens=lexer.tokenize()
-    print("Tokens: ", tokens)
-
     #step 2: parse tokens into AST
     parser = Parser(tokens)
     ast = parser.parse()
-    print("AST: ", ast)
-
     #step 3: evaluate the AST to get resule
     evaluator = Evaluator()
     result = evaluator.evaluate(ast)
@@ -22,8 +18,8 @@ def run_code(code):
 if __name__ == '__main__':
     with open("ExternalTest.txt",'r') as f:
         code = f.read()
-        # print(code)
-        print(run_code(code))
+        run_code(code)
+ 
     f.close()
     
 
